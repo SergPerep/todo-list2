@@ -2,12 +2,21 @@ const express = require("express");
 const app = express();
 const cors = require("cors");
 const pool = require("./db");
+const path = requre("path");
+const PORT = process.env.PORT || 5000;
 
-// Useless comment
+
+
+// process.env.NODE_ENV => production or undefined
 
 // Middleware
 app.use(cors())
 app.use(express.json()); // parse req.body as json
+
+if (process.env.NODE_ENV === "production") {
+    // serve 
+    app.use(express.static(path.join(__dirname, "client/build")))
+}
 
 
 // ROUTES //
@@ -201,6 +210,6 @@ app.get("/colors", async (req, res) => {
 });
 
 
-app.listen(5000, () => {
-    console.log("server started on port 5000")
+app.listen(PORT, () => {
+    console.log(`server started on port ${PORT}`)
 });
