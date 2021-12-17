@@ -2,7 +2,7 @@ const express = require("express");
 const app = express();
 const cors = require("cors");
 const pool = require("./db");
-const path = requre("path");
+const path = require("path");
 const PORT = process.env.PORT || 5000;
 
 
@@ -11,10 +11,11 @@ const PORT = process.env.PORT || 5000;
 
 // Middleware
 app.use(cors())
-app.use(express.json()); // parse req.body as json
+// app.use(express.json()); // parse req.body as json
+
+app.use(express.static(path.join(__dirname, "client/build")));
 
 if (process.env.NODE_ENV === "production") {
-    // serve 
     app.use(express.static(path.join(__dirname, "client/build")))
 }
 
@@ -196,18 +197,29 @@ app.put("/folders/:id", async (req, res) => {
 // Get colors
 
 app.get("/colors", async (req, res) => {
-    const colors = await pool.query(`
-    SELECT
-        id,
-        name,
-        label,
-        font,
-        fill
-    FROM 
-        color`);
-    // Feedback to client
-    res.json(colors.rows);
+    try {
+        const colors = await pool.query(`
+        SELECT
+            id,
+            name,
+            label,
+            font,
+            fill
+        FROM 
+            color`);
+        // Feedback to client
+        res.json(colors.rows);
+    } catch (error) {
+        error.console(error.message);
+    }
 });
+
+
+// Catchcall
+app.get("*", (req, res) => {
+    // Feedback to client
+    res.json("404. Sorry couldn't find the page.");
+})
 
 
 app.listen(PORT, () => {
