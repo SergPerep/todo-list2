@@ -11,7 +11,7 @@ const PORT = process.env.PORT || 5000;
 
 // Middleware
 app.use(cors())
-// app.use(express.json()); // parse req.body as json
+app.use(express.json()); // parse req.body as json
 
 app.use(express.static(path.join(__dirname, "client/build")));
 
